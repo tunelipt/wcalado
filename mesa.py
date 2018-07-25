@@ -159,7 +159,6 @@ class Robo:
     def position(self):
         """Indica a posicao atual do robo de acordo com os parametros de posicao definidos inicialmente"""
         p = self.abs_position()
-        print(p)
         x=p['x']-self.x0
         return dict(x=x)
     
@@ -181,7 +180,7 @@ class Robo:
         """Define a posicao de referencia absoluta"""
         
         self.x0 = 0.0
-        self.sendData("PZ")
+        #self.sendData("PZ")
     
     def stop(self):
         """Para toda a movimentacao imediatamente"""
