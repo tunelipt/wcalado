@@ -519,9 +519,11 @@ class Welcome(QMainWindow):
         
         self.widget.button_conf.clicked.connect(self.configurar)
         self.widget.button_end.clicked.connect(self.sair)
+        quit = QAction("Quit", self)
+        quit.triggered.connect(self.sair)
         
         self.setWindowIcon(QIcon('ipt.jpg'))
-        
+        self.mesa = None
         self.show()
 
     def configurar(self):
@@ -560,8 +562,12 @@ class Welcome(QMainWindow):
     
     def sair(self):
         """Finaliza o processo de comunicação e encerra o aplicativo"""
+        print("CHEGOU 1")
         if self.mesa:
             self.mesa.disconnect()
+        if pr:
+            pr.terminate()
+            
         qApp.quit()
 
 class help_text(QWidget):
@@ -779,8 +785,9 @@ class MyTableWidget(QWidget):
         
     def sair(self):
         """Finaliza o processo de comunicação e encerra o aplicativo"""
-        
+        print("CHEGOU 2")
         self.mesa.disconnect()
+        pr.terminate()
         qApp.quit()
         
     def rmoveClicked(self):
