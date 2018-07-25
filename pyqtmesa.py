@@ -535,11 +535,22 @@ class Welcome(QMainWindow):
         self.initUI(self.port, self.baud, self.size, self.parity, self.stop)
         
 
-    def initUI(self, port, baud, size, parity, stop):
+    def initUI(self, port="COM1", baud=9600, size=8, parity='N', stop=1):
         """initUI fecha a janela atual e abre a interface reponsável pelos comandos ao robo,
         definindo a nova comunicação com o servidor"""
-        self.mesa = mesa.Robo(port = port, baudrate = baud, bytesize = size, parity = parity, stopbits = stop)
+        #print(port)
+        port = "\\\\.\\" + port
+        global pr
+        if pr:
+            pr.terminate()
+        ip = "localhost"
+        iport = 9596
+        pr = Process(target=mesaxmlrpc.start_server, args=(ip, iport, port, baud, size, parity, stop))
+        pr.start()
+        self.mesa = xmlrpc.client.ServerProxy("http://{}:{}".format(ip, iport))
         self.new_wind()
+        #self.mesa = mesa.Robo(port = port, baudrate = baud, bytesize = size, parity = parity, stopbits = stop)
+        #self.new_wind()
         
     def new_wind(self):
         """Fecha a janela de boas vindas e inicia a janela principal"""
@@ -780,6 +791,7 @@ class MyTableWidget(QWidget):
         
         clickedButton = self.sender()
         digitFunction = clickedButton.text()
+        
         p = self.mesa.position()['x']
         if digitFunction[0] == 'H':
             x = (-1)*float(self.step.sliderx.value())
@@ -914,13 +926,21 @@ class MyTableWidget(QWidget):
         self.step.btn_encoder.setStyleSheet("background-color:darkCyan;  border-style: outset; border-width: 2px; border-radius: 10px; border-color: blue;")
         self.step.btn_motor.setStyleSheet("")
         
-import mesa
+#import mesa
+import xmlrpc.client
+from xmlrpc.server import SimpleXMLRPCRequestHandler
+    
+from multiprocessing import Process
+import mesaxmlrpc
 
 if __name__ == '__main__':  
     #robo = roboteste.mesa()
     app = QApplication(sys.argv)
     global inicial
     inicial = True
+    global pr
+    pr = ''
+    
     # Create and display the splash screen
     splash_pix = QPixmap('ipt.jpg')
     splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)

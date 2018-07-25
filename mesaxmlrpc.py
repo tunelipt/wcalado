@@ -9,16 +9,14 @@ import mesa
 
 from xmlrpc.server import SimpleXMLRPCServer
 
-def start_server(ip='192.168.0.103', port=9595, porta='COM1', baud=9600, size=8, parity='N', stop=1):
+def start_server(ip='locahost', port=9596, porta='COM1', baud=9600, size=8, parity='N', stop=1):
     """Inicializa o servidor relacionando-o a uma instancia importada de um arquivo externo
     
     Keyword arguments:
     ip -- endereco do servidor
     port -- porta do servidor"""
     
-    m = mesa.Mesa(port = porta, baudrate = baud, bytesize = size, parity = parity, stopbits = stop)
-    ip = ip
-    port = port
+    m = mesa.Robo(port = porta, baudrate = baud, bytesize = size, parity = parity, stopbits = stop)
     print("Connecting to Serial...")
     m.connect()
     print("Starting XML-RPC server...")
