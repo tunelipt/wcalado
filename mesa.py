@@ -79,8 +79,9 @@ class Robo:
         if y:
             x = x%360 
         
-        if x//180:
-            x = x - 360
+        #if x//180:  # Para evitar que a mesa fica girande indefinidamente. Acho melhor
+        #            # que isso seja política do usuário. Estou comentando isso por enquanto PJ
+        #    x = x - 360
         step = self.step
         if not self.isconnected:
             raise XException("Python interface not connected")
