@@ -545,7 +545,7 @@ class Welcome(QMainWindow):
         global pr
         if pr:
             pr.terminate()
-        ip = "192.168.0.103"  #"localhost"
+        ip = 'localhost' #"192.168.0.100"
         iport = 9596
         pr = Process(target=mesaxmlrpc.start_server, args=(ip, iport, port, baud, size, parity, stop))
         pr.start()

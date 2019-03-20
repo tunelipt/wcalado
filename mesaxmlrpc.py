@@ -9,7 +9,7 @@ import mesa
 
 from xmlrpc.server import SimpleXMLRPCServer
 
-def start_server(ip='locahost', port=9596, porta='COM1', baud=9600, size=8, parity='N', stop=1):
+def start_server(ip='localhost', port=9596, porta='COM1', baud=9600, size=8, parity='N', stop=1):
     """Inicializa o servidor relacionando-o a uma instancia importada de um arquivo externo
     
     Keyword arguments:
