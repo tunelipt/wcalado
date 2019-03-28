@@ -70,18 +70,11 @@ class Robo:
             reply += tmp
         return reply
     
-    def move(self, x, y = None, z = None, a = False, r = False, sync = False):
+    def move(self, x, a = False, r = False, sync = False):
         """Inicializa a movimentacao do robo verificando todos os eixos
         
         O parametro s define o comando incremental na linguagem X"""
         x = int(x)
-        y = x//360
-        if y:
-            x = x%360 
-        
-        if x//180:  # Para evitar que a mesa fica girande indefinidamente. Acho melhor
-                    # que isso seja política do usuário. Estou comentando isso por enquanto PJ
-            x = x - 360
         step = self.step
         if not self.isconnected:
             raise XException("Python interface not connected")
@@ -109,18 +102,10 @@ class Robo:
             self.waitUntilDone()
         return rep
     
-    def rmove(self, x, y = None, z = None, sync = False):
+    def rmove(self, x, sync = False):
         """Inicializa a movimentacao incremental do robo no eixo indicado"""
-        p = self.position()['x']
-        if p//180:
-            p = p-360
-        if x+p>180 or x+p<-180:
-            if x > 0:
-                x = x - 360
-            else:
-                x = x + 360                  
-        self.move(x, r = True, sync = sync)
-    
+        self.move(x, r=True, sync=sync)
+        return
     def abs_position(self, pulses=False):
         """Indica a posicao atual absoluta do robo de acordo com os parametros de posicao definidos inicialmente"""
         if not self.isconnected:

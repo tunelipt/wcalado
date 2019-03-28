@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Created on Wed Nov 29 14:51:03 2017
 
@@ -821,12 +822,6 @@ class MyTableWidget(QWidget):
         Chamando o comando por meio do arquivo passado por *self.mesa*"""
         x = float(self.move.slidermx.value())
         
-        y = x%360
-        if y:
-            x = x - 360*y 
-        
-        if x%180:
-            x = x - 360
         
         self.mesa.move(x)
         self.posClicked(True)
@@ -856,9 +851,6 @@ class MyTableWidget(QWidget):
             self.changed = False
         else:
             p = self.mesa.position()['x']
-            if p < 0:
-                p += 360*abs(p//360)
-            p = p%360
             self.text1 = "Ângulo = {}".format(format(p, '.3f'))
         self.position.labelp.setText(self.text1)
         
@@ -875,9 +867,6 @@ class MyTableWidget(QWidget):
             self.changed = False
         else:
             p = self.mesa.abs_position()['x']
-            if p < 0:
-                p += 360*abs(p//360)
-            p = p%360
             self.text2 = "Ângulo = {}".format(format(p, '.3f'))
         self.position.labelabsp.setText(self.text2)
         
