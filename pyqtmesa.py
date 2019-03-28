@@ -151,6 +151,7 @@ class StepMove(QWidget):
         
         label = labels
         label.setText(str(value)+'°')
+        self.entrada_x.setText(str(value))
         
 class Reference(QWidget):
     """Classe criada a partir da classe QWidget, 
@@ -252,8 +253,8 @@ class Move(QWidget):
         self.slidermx.setFocusPolicy(Qt.StrongFocus)
         self.slidermx.setSingleStep(1)
         self.slidermx.setValue(0)
-        self.slidermx.setMinimum(-180)
-        self.slidermx.setMaximum(180)
+        self.slidermx.setMinimum(-360)
+        self.slidermx.setMaximum(360)
         self.slidermx.setMinimumWidth(120)
         
         self.move_x = QLineEdit(self)
@@ -309,6 +310,7 @@ class Move(QWidget):
         
         label = labels
         label.setText(str(value)+'°')
+        self.move_x.setText(str(value))
 
 
 class Position(QWidget):
