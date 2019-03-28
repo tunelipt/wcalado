@@ -805,16 +805,11 @@ class MyTableWidget(QWidget):
         p = self.mesa.position()['x']
         if digitFunction[0] == 'H':
             x = (-1)*float(self.step.sliderx.value())
-            if x+p>180 or x+p<-180:
-                x = x + 360          
             self.mesa.rmove(x)
         
         elif digitFunction[0] == "A":
             x = float(self.step.sliderx.value())
-            if x+p>180 or x+p<-180:
-                x = x - 360
             self.mesa.rmove(x)
-        x=0
         self.posClicked(True)
         self.absposClicked(True)
         

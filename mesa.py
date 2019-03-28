@@ -85,16 +85,17 @@ class Robo:
             x0 = float(x0)
         if step:
             if r:
-                step = self.abs_position(pulses = True)
-                pos = round(self.abs_position()['x'])
-                msg = ["FSA0 \n", "D" + str(round(self._passoEncoder*(x + pos) - step)) + "\n", "G \n"]
+                #step = self.abs_position(pulses = True)
+                #pos = self.abs_position()['x']
+                #msg = ["FSA0 \n", "D" + str(round(self._passoEncoder*(x + pos) - step)) + "\n", "G \n"]
+                msg = ["FSA0 \n", "D" + str(round(self._passoEncoder*x)) + "\n", "G \n"]
             else:
-                msg = ["FSA1 \n", "D" + str(round(x*self._passoEncoder + x0)) + "\n", "G \n"]
+                msg = ["FSA1 \n", "D" + str(round((x+x0)*self._passoEncoder)) + "\n", "G \n"]
         else:
             if r:
                 msg = ["MPI \n", "D" + str(round(x*self._passoMotor)) + "\n", "G \n"]
             else:
-                msg = ["MPA \n", "D" + str(round(x*self._passoMotor + x0)) + "\n", "G \n"]
+                msg = ["MPA \n", "D" + str(round((x+x0)*self._passoMotor)) + "\n", "G \n"]
         for i in msg:
             self.sendData(i)
         rep = self.get_reply()
@@ -151,7 +152,7 @@ class Robo:
     def set_reference(self):
         """Define a posicao de referencia"""
         
-        p = self.abs_position()
+        p = self.abs_position(False)
         self.x0 = p['x']
         
     def home(self, eixo, sinal):
