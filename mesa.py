@@ -43,7 +43,7 @@ class Robo:
         self.isconnected = True
         self.sendData("E")
         reply = self.get_reply()
-        seq = ["LD3", "MN", "OSC1", "FSB1", "A5", "V5", "ER1"]
+        seq = ["LD3", "MN", "OSC1", "FSB1", "A2", "V4", "ER1"]
         for i in seq:
             self.sendData(i)
         self.step_encoder()        
