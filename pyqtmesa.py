@@ -421,86 +421,8 @@ class Clear(QWidget):
         
         return cleargroup
 
-class client_setting(QWidget):
-    """client_setting exibe as entradas de texto para a definicao do endereço e porta utilizados
-    pela comunicação XMLRPC"""
-    
-    def __init__(self, inicial=False):
-        """Funcao __init__ para definir o layout geral"""
-        
-        self.inicial = inicial
-        super().__init__()
-        self.title = "Configuracoes da serial"
-        
-        self.comboport = QLineEdit(self)
-        self.comboport.setText('COM1')
-        self.comboport.setMaximumWidth(150)
-        self.labelport = QLabel('Porta:')
-        
-        self.combobaud = QComboBox(self)
-        self.combobaud.addItem('9600')
-        self.combobaud.setMaximumWidth(150)
-        self.labelbaud = QLabel('Baud Rate:')
 
-        self.combosize = QComboBox(self)
-        self.combosize.addItem('8')
-        self.combosize.addItem('7')
-        self.combosize.addItem('6')
-        self.combosize.addItem('5')
-        self.combosize.setMaximumWidth(150)
-        self.labelsize = QLabel('Tamanho do Byte:')
-        
-        self.comboparity = QComboBox(self)
-        self.comboparity.addItem('N')
-        self.comboparity.addItem('E')
-        self.comboparity.addItem('O')
-        self.comboparity.addItem('M')
-        self.comboparity.addItem('S')
-        self.comboparity.setMaximumWidth(150)
-        self.labelparity = QLabel('Paridade:')
-        
-        self.combostop = QComboBox(self)
-        self.combostop.addItem('1')
-        self.combostop.addItem('2')
-        self.combostop.setMaximumWidth(150)
-        self.labelstop = QLabel('Bit de Parada:')
-        
-        self.button_end = QPushButton('Sair')
-        self.button_conf = QPushButton('Configurar')
-        
-        column = QVBoxLayout()
-        row1 = QHBoxLayout()
-        row2 = QHBoxLayout()
-        row3 = QHBoxLayout()
-        row4 = QHBoxLayout()
-        row5 = QHBoxLayout()
-
-        column.addLayout(row1)
-        row1.addWidget(self.labelport)
-        row1.addWidget(self.comboport)
-        
-        column.addLayout(row2)
-        row2.addWidget(self.labelbaud)
-        row2.addWidget(self.combobaud)
-        
-        column.addLayout(row3)
-        row3.addWidget(self.labelsize)
-        row3.addWidget(self.combosize)
-        
-        column.addLayout(row4)
-        row4.addWidget(self.labelparity)
-        row4.addWidget(self.comboparity)
-        
-        column.addLayout(row5)
-        row5.addWidget(self.labelstop)
-        row5.addWidget(self.combostop)
-        
-        column.addWidget(self.button_conf)
- 
-        column.addStretch(1)
-        column.addWidget(self.button_end)
-       
-        self.setLayout(column)
+import comconfig
         
 class Welcome(QMainWindow):
     """Classe implementada a partir da classe QMainWindow e gera a tela inicial,
@@ -517,7 +439,7 @@ class Welcome(QMainWindow):
         self.setWindowTitle("Configurações Iniciais")
         self.setGeometry(50, 50, 350, 400)
         
-        self.widget = client_setting()
+        self.widget = comconfig.COMConfig(True, "COM1", baud=9600, size=8, parity='N', stop=1) #client_setting()
         self.setCentralWidget(self.widget)
         
         self.widget.button_conf.clicked.connect(self.configurar)
@@ -532,7 +454,7 @@ class Welcome(QMainWindow):
     def configurar(self):
         """Essa funcao e chamada pelo botao *Configurar* e toma os valores das entradas de texto
         como os novos valores de endereco e porta"""
-        self.port = self.widget.comboport.text()
+        self.port = self.widget.comboport.currentText()
         self.baud = int(self.widget.combobaud.currentText())
         self.size = int(self.widget.combosize.currentText())
         self.parity = str(self.widget.comboparity.currentText())
