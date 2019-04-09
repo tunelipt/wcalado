@@ -34,7 +34,7 @@ class XMLRPCConfig(QWidget):
     """
     
     def __init__(self, server=False, ip=None, port=9500, parent=None):
-        super().__init__()
+        super(XMLRPCConfig, self).__init__(parent=parent)
 
         if server:
             import netifaces
@@ -91,7 +91,7 @@ class XMLRPCConfig(QWidget):
         ip = self.iptext.currentText()
         return ip
     def port(self):
-        return self.porttext.currentText()
+        return self.porttext.text()
 
 
 

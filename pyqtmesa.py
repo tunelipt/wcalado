@@ -532,7 +532,8 @@ class Help(QWidget):
     def fechar(self):
         """Fecha a janela de ajuda"""
         self.close()
-        
+
+
 class MainWindow(QMainWindow):
     """Classe implementada sobre a partir da classe QMainWindow e gera a tela de comandos,
     responsavel pela disposicao final das guias"""
@@ -543,7 +544,6 @@ class MainWindow(QMainWindow):
         Keyword argumets:
         robo -- arquivo do qual chamam-se os comandos enviados ao robo
         """
-        
         self.mesa = mesa
         
         super(MainWindow, self).__init__(parent)
@@ -558,9 +558,9 @@ class MainWindow(QMainWindow):
         exitAct.setStatusTip('Sair do Programa')
         exitAct.triggered.connect(self.table_widget.sair)
         
-        configAct = QAction(QIcon('configura.jpg'), '&Configurar', self)
-        configAct.setStatusTip('Configurar endereço')
-        configAct.triggered.connect(self.new_wind)
+        #configAct = QAction(QIcon('configura.jpg'), '&Configurar', self)
+        #configAct.setStatusTip('Configurar endereço')
+        #configAct.triggered.connect(self.new_wind)
         
         helpAct = QAction(QIcon('help.jpg'), '&Ajuda', self)
         helpAct.setShortcut('Ctrl+H')
@@ -569,11 +569,12 @@ class MainWindow(QMainWindow):
         
         menubar = self.menuBar()
         configMenu = menubar.addMenu('&Configurações')
-        configMenu.addAction(configAct)
+        #configMenu.addAction(configAct)
         configMenu.addAction(helpAct)
         configMenu.addAction(exitAct)
         self.setWindowIcon(QIcon('ipt.jpg'))
-        self.show()
+        print("CHEGOU AQUI")
+        #self.show()
         
     def new_wind(self):
         """Fecha a janela de boas vindas e inicia a janela principal"""
@@ -608,7 +609,6 @@ class MyTableWidget(QWidget):
         self.position = Position()
         self.stop = Stop()
         self.clear = Clear()
-        self.widget = client_setting()
         
         grid.addWidget(self.relativo, 0, 0)
         grid.addWidget(self.step, 1, 0)

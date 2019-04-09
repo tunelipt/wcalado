@@ -215,6 +215,11 @@ class Robo:
             self.ser.close()
 
         return None
+    def ping(self):
+        """
+        Dando sinal de vida...
+        """
+        return 123
 
 if __name__ == "__main__":
     print("Creating server ...")

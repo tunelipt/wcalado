@@ -5,7 +5,7 @@ Created on Fri Nov 24 14:35:10 2017
 @author: felipenanini
 """
 
-import mesa
+import mesateste as mesa
 
 from xmlrpc.server import SimpleXMLRPCServer
 
