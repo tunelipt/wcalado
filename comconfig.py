@@ -20,6 +20,8 @@ class COMConfig(QWidget):
     def __init__(self, scanports=True, port="COM1", baud=9600, size=8, parity='N', stop=1):
 
         super().__init__()
+
+
         self.comboport = QComboBox(self)
         self.labelport = QLabel('Porta:')
         if scanports:
@@ -105,13 +107,14 @@ class COMConfig(QWidget):
         row5.addWidget(self.combostop)
         
         column.addWidget(self.button_conf)
- 
         column.addStretch(1)
         column.addWidget(self.button_end)
 
-       
-        self.setLayout(column)
-
+        col0 = QVBoxLayout()
+        groupbox = QGroupBox("Config. COM")
+        groupbox.setLayout(column)
+        col0.addWidget(groupbox)
+        self.setLayout(col0)
         
     def comport(self):
         return self.comboport.currentText()
