@@ -41,16 +41,14 @@ class WMesaServer(QMainWindow):
         
         self.draw_gui()
         
-        #self.setCentralWidget(self.widget)
-        
-        #self.widget.button_conf.clicked.connect(self.configurar)
-        #self.widget.button_end.clicked.connect(self.sair)
-        quit = QAction("Quit", self)
-        quit.triggered.connect(self.sair)
+        #quit = QAction("Quit", self)
+        #quit.triggered.connect(self.sair)
+        #global app
+        #app.aboutToQuit.connect(self.sair)
         
         self.setWindowIcon(QIcon('ipt.jpg'))
         self.show()
-
+    
     def draw_gui(self):
         self.setWindowTitle("Interface da mesa giratória")
         #self.setGeometry(50, 50, 350, 400)
@@ -61,8 +59,8 @@ class WMesaServer(QMainWindow):
         
         self.rpc = xmlrpcconfig.XMLRPCConfig(True, "localhost", 9596, parent=self)
         self.check_rpc = QCheckBox("Usar XML-RPC")
-        self.check_rpc.setChecked(True)
         self.check_rpc.stateChanged.connect(self.rpc_check_changed)
+        self.check_rpc.setChecked(True)
         vbox.addWidget(self.com)
         vbox.addWidget(self.check_rpc)
         vbox.addWidget(self.rpc)
@@ -86,13 +84,11 @@ class WMesaServer(QMainWindow):
             
         
     def init_server(self):
-
         port = self.com.comport()
         baud = self.com.baudrate()
         size = self.com.bytesize()
         parity = self.com.parity()
         stopbits = self.com.stopbits()
-
         pr = None
         m = None
 
@@ -103,7 +99,6 @@ class WMesaServer(QMainWindow):
             ntries = 0
             while True:
                 ntries = ntries + 1
-
                 pr = Process(target=mesaxmlrpc.start_server, args=(xaddr, xport, port, baud,
                                                                    size, parity, stopbits))
                 pr.start()
@@ -131,23 +126,20 @@ class WMesaServer(QMainWindow):
                 if m.ping() != 123:
                     raise RuntimeError("Não comunicou")
             except:
-                QMessage.critical(self, 'Erro', "Não foi possível inicial o servidor XML-RPC",
-                                  QMessageBox.Ok)
+                QMessage.critical(self, 'Erro', "Não foi possível iniciar o servidor XML-RPC",
+                MessageBox.Ok)
                 m = None
+                
         if m is not None:
             self.close()
-            win = pyqtmesa.MainWindow(m)
-            win.show()
-    
-
-    
+            self.win = pyqtmesa.MainWindow(m, pr)
+            self.win.show()
+            return
+    def close(self):
+        self.sair()
+        
     def sair(self):
         """Finaliza o processo de comunicação e encerra o aplicativo"""
-        if self.mesa:
-            self.mesa.disconnect()
-        if pr:
-            pr.terminate()
-            
         qApp.quit()
 
 
@@ -156,10 +148,10 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     
     # Create and display the splash screen
-    #splash_pix = QPixmap('ipt.jpg')
-    #splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
-    #splash.setMask(splash_pix.mask())
-    #splash.show()
+    splash_pix = QPixmap('ipt.jpg')
+    splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
+    splash.setMask(splash_pix.mask())
+    splash.show()
     app.processEvents()
 
     # Simulate something that takes time
@@ -167,6 +159,6 @@ if __name__ == '__main__':
     
     win = WMesaServer()
     win.show()
-    #splash.finish(win)
+    splash.finish(win)
 
     sys.exit(app.exec_())

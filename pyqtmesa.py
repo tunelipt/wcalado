@@ -7,7 +7,7 @@ Created on Wed Nov 29 14:51:03 2017
 
 import sys
 from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSplashScreen, QGridLayout, QComboBox,
-                             QGroupBox, QPushButton, QApplication, QSlider, QMainWindow, qApp, QLineEdit, QAction)
+                             QGroupBox, QPushButton, QApplication, QSlider, QMainWindow, qApp, QLineEdit, QAction, QCheckBox)
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QPixmap, QIcon, QRegExpValidator, QPainter, QColor, QFont, QPen
 import time
@@ -538,19 +538,20 @@ class MainWindow(QMainWindow):
     """Classe implementada sobre a partir da classe QMainWindow e gera a tela de comandos,
     responsavel pela disposicao final das guias"""
     
-    def __init__(self, mesa, parent=None):
+    def __init__(self, mesa, process=None, parent=None):
         """Funcao __init__ para definir o layout geral
         
         Keyword argumets:
         robo -- arquivo do qual chamam-se os comandos enviados ao robo
         """
+        super(MainWindow, self).__init__(parent)
+        
         self.mesa = mesa
         
-        super(MainWindow, self).__init__(parent)
         self.setWindowTitle("Movimentador do Tunel")
         self.setGeometry(50, 50, 500, 550)
         
-        self.table_widget = MyTableWidget(self.mesa, self)
+        self.table_widget = MyTableWidget(self.mesa, process, self)
         self.setCentralWidget(self.table_widget)
         
         exitAct = QAction(QIcon('exit.png'), '&Sair', self)
@@ -566,15 +567,17 @@ class MainWindow(QMainWindow):
         helpAct.setShortcut('Ctrl+H')
         helpAct.setStatusTip('Ajuda')
         helpAct.triggered.connect(self.ajuda)
-        
+
+        quit = QAction("Quit", self)
+        quit.triggered.connect(self.table_widget.sair)
+
         menubar = self.menuBar()
         configMenu = menubar.addMenu('&Configurações')
         #configMenu.addAction(configAct)
         configMenu.addAction(helpAct)
         configMenu.addAction(exitAct)
         self.setWindowIcon(QIcon('ipt.jpg'))
-        print("CHEGOU AQUI")
-        #self.show()
+        self.show()
         
     def new_wind(self):
         """Fecha a janela de boas vindas e inicia a janela principal"""
@@ -592,10 +595,11 @@ class MyTableWidget(QWidget):
     """Classe implementada a partir da classe QWidget, gera a tela inicial dispondo
     os grupos criados em um *grid layout*"""
     
-    def __init__(self, mesa, parent=None):
+    def __init__(self, mesa, process=None, parent=None):
         """Define os grupos dentro do *grid layout*"""
         
         self.mesa = mesa
+        self.process = process
         super(MyTableWidget, self).__init__(parent)
         
         #Layout Geral
@@ -636,9 +640,9 @@ class MyTableWidget(QWidget):
         
     def sair(self):
         """Finaliza o processo de comunicação e encerra o aplicativo"""
-        print("CHEGOU 2")
         self.mesa.disconnect()
-        pr.terminate()
+        if self.process is not None:
+            self.process.terminate()
         qApp.quit()
         
     def rmoveClicked(self):
