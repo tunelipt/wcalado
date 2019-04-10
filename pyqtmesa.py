@@ -644,6 +644,8 @@ class MyTableWidget(QWidget):
         if self.process is not None:
             self.process.terminate()
         qApp.quit()
+
+            
         
     def rmoveClicked(self):
         """Utiliza o metodo sender dos botoes para a movimentacao relativa de cada uma das coordenadas,

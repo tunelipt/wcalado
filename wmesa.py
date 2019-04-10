@@ -40,11 +40,11 @@ class WMesaServer(QMainWindow):
         self.setCentralWidget(self.widget)
         
         self.draw_gui()
-        
         #quit = QAction("Quit", self)
         #quit.triggered.connect(self.sair)
-        #global app
-        #app.aboutToQuit.connect(self.sair)
+        
+        self.process = None
+        self.mesa = None
         
         self.setWindowIcon(QIcon('ipt.jpg'))
         self.show()
@@ -91,7 +91,7 @@ class WMesaServer(QMainWindow):
         stopbits = self.com.stopbits()
         pr = None
         m = None
-
+        self.process = None
         if self.check_rpc.isChecked():
             xaddr = self.rpc.ipaddr().strip()
             xport = self.rpc.port()
@@ -119,7 +119,9 @@ class WMesaServer(QMainWindow):
                     time.sleep(4)
 
         else:
-            import mesateste as mesa
+            #import mesateste as mesa
+            import mesa
+
             m = mesa.Robo(port, baud, size, parity, stopbits)
             time.sleep(3)
             try:
@@ -129,15 +131,17 @@ class WMesaServer(QMainWindow):
                 QMessage.critical(self, 'Erro', "Não foi possível iniciar o servidor XML-RPC",
                 MessageBox.Ok)
                 m = None
-                
+        self.process = pr
+        self.mesa = m
         if m is not None:
             self.close()
-            self.win = pyqtmesa.MainWindow(m, pr)
+            self.win = pyqtmesa.MainWindow(self.mesa, self.process)
             self.win.show()
             return
-    def close(self):
-        self.sair()
-        
+        else:
+            QMessage.critical(self, 'Erro', "Não foi possível criar uma interface com a Mesa",
+                              QMessageBox.Ok)
+            
     def sair(self):
         """Finaliza o processo de comunicação e encerra o aplicativo"""
         qApp.quit()
