@@ -118,11 +118,12 @@ class WMesaServer(QMainWindow):
         m = xmlrpc.client.ServerProxy(serv)
         self.process = None
         err = False
+        msg = "http://{}:{}".format(xaddr, xport)
         try:
             if m.ping() == 123:
                 self.mesa = m
                 self.close()
-                self.win = pyqtmesa.MainWindow(self.mesa, '', self.process)
+                self.win = pyqtmesa.MainWindow(self.mesa, msg, self.process)
                 self.win.show()
                 return
             else:
@@ -146,9 +147,12 @@ class WMesaServer(QMainWindow):
         m = None
         self.process = None
         self.initserver = self.check_rpc.isChecked()
+        msg = ''
         if self.initserver:
             xaddr = self.rpc.ipaddr().strip()
             xport = self.rpc.port()
+
+            msg = "http://{}:{}".format(xaddr, xport)
 
             ntries = 0
             while True:
@@ -175,9 +179,11 @@ class WMesaServer(QMainWindow):
             #import mesateste as mesa
             if self.test:
                 import mesateste as mesa
+                msg = "TESTE: {}".format(port)
             else:
                 import mesa
-
+                msg = "{}".format(port)
+            
             m = mesa.Robo(port, baud, size, parity, stopbits)
             time.sleep(3)
             try:
@@ -191,7 +197,7 @@ class WMesaServer(QMainWindow):
         self.mesa = m
         if m is not None:
             self.close()
-            self.win = pyqtmesa.MainWindow(self.mesa, '', self.process)
+            self.win = pyqtmesa.MainWindow(self.mesa, msg, self.process)
             self.win.show()
             return
         else:
@@ -226,7 +232,7 @@ if __name__ == '__main__':
     app.processEvents()
 
     # Simulate something that takes time
-    #time.sleep(1)
+    time.sleep(1)
     
     win = WMesaServer(args.test, args.ip, args.port, args.comport, not args.serverless, args.client)
     win.show()

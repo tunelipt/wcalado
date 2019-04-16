@@ -551,12 +551,12 @@ class MainWindow(QMainWindow):
         if msg is not None:
             titulo += " - " + msg
         
-        self.setWindowTitle(msg)
+        self.setWindowTitle(titulo)
         self.setGeometry(50, 50, 500, 550)
         
         self.table_widget = MyTableWidget(self.mesa, process, self)
         self.setCentralWidget(self.table_widget)
-        
+
         exitAct = QAction(QIcon('exit.png'), '&Sair', self)
         exitAct.setShortcut('Ctrl+Q')
         exitAct.setStatusTip('Sair do Programa')
@@ -579,7 +579,9 @@ class MainWindow(QMainWindow):
         #configMenu.addAction(configAct)
         configMenu.addAction(helpAct)
         configMenu.addAction(exitAct)
+
         self.setWindowIcon(QIcon('ipt.jpg'))
+
         self.show()
         
     def new_wind(self):
