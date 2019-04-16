@@ -6,16 +6,19 @@ Created on Fri Nov 24 14:35:10 2017
 """
 
 #import mesateste as mesa
-import mesa
 
 from xmlrpc.server import SimpleXMLRPCServer
 
-def start_server(ip='localhost', port=9596, porta='COM1', baud=9600, size=8, parity='N', stop=1):
+def start_server(test=False, ip='localhost', port=9596, porta='COM1', baud=9600, size=8, parity='N', stop=1):
     """Inicializa o servidor relacionando-o a uma instancia importada de um arquivo externo
     
     Keyword arguments:
     ip -- endereco do servidor
     port -- porta do servidor"""
+    if test:
+        import mesateste as mesa
+    else:
+        import mesa
     
     m = mesa.Robo(port = porta, baudrate = baud, bytesize = size, parity = parity, stopbits = stop)
     print("Connecting to Serial...")

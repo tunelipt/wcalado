@@ -12,23 +12,22 @@ from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSplashS
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QPixmap, QIcon, QRegExpValidator, QPainter, QColor, QFont, QPen
 import time
-
 import comconfig
 import xmlrpcconfig
 
 import pyqtmesa
 
 import xmlrpc.client
-from xmlrpc.server import SimpleXMLRPCRequestHandler
-    
-from multiprocessing import Process
+   
+from multiprocessing import Process, freeze_support
 import mesaxmlrpc
+import argparse
 
 class WMesaServer(QMainWindow):
     """Classe implementada a partir da classe QMainWindow e gera a tela inicial,
     responsavel pela configuracao inicial dos argumentos utilizados pelo XMLRPC"""
     
-    def __init__(self, parent=None):
+    def __init__(self, test=False,  srvip="localhost", srvport=9596, comport=None, server=True, client=False, parent=None):
         """Funcao __init__ para definir o layout geral
         
         Keyword argumets:
@@ -38,7 +37,10 @@ class WMesaServer(QMainWindow):
         super(WMesaServer, self).__init__(parent=parent)
         self.widget = QWidget(self)
         self.setCentralWidget(self.widget)
-        
+        self.initvals = dict(test=test, ip=srvip, port=srvport, comport=comport, server=server, client=client)
+        self.test = test
+        self.client = client
+		
         self.draw_gui()
         #quit = QAction("Quit", self)
         #quit.triggered.connect(self.sair)
@@ -54,10 +56,10 @@ class WMesaServer(QMainWindow):
         #self.setGeometry(50, 50, 350, 400)
         vbox = QVBoxLayout()
         brow = QHBoxLayout()
-
-        self.com = comconfig.COMConfig(True, "COM1", baud=9600, size=8, parity='N', stop=1, parent=self)
         
-        self.rpc = xmlrpcconfig.XMLRPCConfig(True, "localhost", 9596, parent=self)
+        self.com = comconfig.COMConfig(True, self.initvals['comport'], baud=9600, size=8, parity='N', stop=1, parent=self)
+        
+        self.rpc = xmlrpcconfig.XMLRPCConfig(True, self.initvals['ip'], self.initvals['port'], parent=self)
         self.check_rpc = QCheckBox("Usar XML-RPC")
         self.check_rpc.stateChanged.connect(self.rpc_check_changed)
         self.check_rpc.setChecked(True)
@@ -99,8 +101,7 @@ class WMesaServer(QMainWindow):
             ntries = 0
             while True:
                 ntries = ntries + 1
-                pr = Process(target=mesaxmlrpc.start_server, args=(xaddr, xport, port, baud,
-                                                                   size, parity, stopbits))
+                pr = Process(target=mesaxmlrpc.start_server, args=(self.test, xaddr, xport, port, baud, size, parity, stopbits))
                 pr.start()
 
                 time.sleep(5)
@@ -120,7 +121,10 @@ class WMesaServer(QMainWindow):
 
         else:
             #import mesateste as mesa
-            import mesa
+            if self.test:
+                import mesateste as mesa
+            else:
+                import mesa
 
             m = mesa.Robo(port, baud, size, parity, stopbits)
             time.sleep(3)
@@ -148,8 +152,19 @@ class WMesaServer(QMainWindow):
 
 
 if __name__ == '__main__':  
-    #robo = roboteste.mesa()
-    app = QApplication(sys.argv)
+    freeze_support()
+    
+    parser = argparse.ArgumentParser(description="wmesa")
+    parser.add_argument("-t", "--test", help="Interface teste da mesa giratória", action="store_true")
+    parser.add_argument("-i", "--ip", help="Endereço IP do servidor XML-RPC", default="localhost")
+    parser.add_argument("-p", "--port", help="Porta XML-RPC do servidor XML-RPC", default=9656, type=int)
+    parser.add_argument("-s", "--comport", help="Porta serial a ser utilizada", default="COM1")
+    parser.add_argument("-n", "--serverless", help="Não inicie o servidor XML-RPC", action="store_true")
+    parser.add_argument("-c", "--client", help="Criar interface para cliente de servidor XML-RPC", action="store_true")
+    
+    app = QApplication([]) # sys.argv
+
+    args = parser.parse_args()
     
     # Create and display the splash screen
     splash_pix = QPixmap('ipt.jpg')
@@ -161,7 +176,7 @@ if __name__ == '__main__':
     # Simulate something that takes time
     #time.sleep(1)
     
-    win = WMesaServer()
+    win = WMesaServer(args.test, args.ip, args.port, args.comport, not args.serverless, args.client)
     win.show()
     splash.finish(win)
 
