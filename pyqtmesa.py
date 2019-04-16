@@ -538,7 +538,7 @@ class MainWindow(QMainWindow):
     """Classe implementada sobre a partir da classe QMainWindow e gera a tela de comandos,
     responsavel pela disposicao final das guias"""
     
-    def __init__(self, mesa, process=None, parent=None):
+    def __init__(self, mesa, msg=None, process=None, parent=None):
         """Funcao __init__ para definir o layout geral
         
         Keyword argumets:
@@ -547,8 +547,11 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
         
         self.mesa = mesa
+        titulo = "Movimentador do Tunel"
+        if msg is not None:
+            titulo += " - " + msg
         
-        self.setWindowTitle("Movimentador do Tunel")
+        self.setWindowTitle(msg)
         self.setGeometry(50, 50, 500, 550)
         
         self.table_widget = MyTableWidget(self.mesa, process, self)

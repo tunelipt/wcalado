@@ -36,6 +36,7 @@ class XMLRPCConfig(QWidget):
     def __init__(self, server=False, ip=None, port=9500, parent=None):
         super(XMLRPCConfig, self).__init__(parent=parent)
 
+        self.server = server
         if server:
             import netifaces
             addr = ip4addr()
@@ -88,7 +89,10 @@ class XMLRPCConfig(QWidget):
         self.setLayout(col0)
         
     def ipaddr(self):
-        ip = self.iptext.currentText()
+        if self.server:
+            ip = self.iptext.currentText()
+        else:
+            ip = self.iptext.text()
         return ip
     def port(self):
         return self.porttext.text()

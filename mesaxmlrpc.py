@@ -6,6 +6,7 @@ Created on Fri Nov 24 14:35:10 2017
 """
 
 #import mesateste as mesa
+import argparse
 
 from xmlrpc.server import SimpleXMLRPCServer
 
@@ -16,6 +17,7 @@ def start_server(test=False, ip='localhost', port=9596, porta='COM1', baud=9600,
     ip -- endereco do servidor
     port -- porta do servidor"""
     if test:
+        print("TESTE")
         import mesateste as mesa
     else:
         import mesa
@@ -24,6 +26,7 @@ def start_server(test=False, ip='localhost', port=9596, porta='COM1', baud=9600,
     print("Connecting to Serial...")
     m.connect()
     print("Starting XML-RPC server...")
+    print("IP: {}, port: {}".format(ip, port))
     srvr = MesaServer(ip, port, m)
     srvr.start()
 
@@ -44,4 +47,16 @@ class MesaServer:
 
 if __name__ == "__main__":
     print("Creating interface ...")
-    start_server()
+    parser = argparse.ArgumentParser(description="wmesa")
+    parser.add_argument("-t", "--test", help="Interface teste da mesa giratória", action="store_true")
+    parser.add_argument("-i", "--ip", help="Endereço IP do servidor XML-RPC", default="localhost")
+    parser.add_argument("-p", "--port", help="Porta XML-RPC do servidor XML-RPC", default=9596, type=int)
+    parser.add_argument("-s", "--comport", help="Porta serial a ser utilizada", default="COM1")
+    parser.add_argument("-n", "--serverless", help="Não inicie o servidor XML-RPC", action="store_true")
+    parser.add_argument("-c", "--client", help="Criar interface para cliente de servidor XML-RPC", action="store_true")
+    
+
+    args = parser.parse_args()
+
+    
+    start_server(args.test, args.ip, args.port, args.comport)

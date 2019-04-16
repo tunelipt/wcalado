@@ -27,7 +27,7 @@ class WMesaServer(QMainWindow):
     """Classe implementada a partir da classe QMainWindow e gera a tela inicial,
     responsavel pela configuracao inicial dos argumentos utilizados pelo XMLRPC"""
     
-    def __init__(self, test=False,  srvip="localhost", srvport=9596, comport=None, server=True, client=False, parent=None):
+    def __init__(self, test=False,  srvip="localhost", srvport=9596, comport=None, initserver=True, client=False, parent=None):
         """Funcao __init__ para definir o layout geral
         
         Keyword argumets:
@@ -37,10 +37,15 @@ class WMesaServer(QMainWindow):
         super(WMesaServer, self).__init__(parent=parent)
         self.widget = QWidget(self)
         self.setCentralWidget(self.widget)
-        self.initvals = dict(test=test, ip=srvip, port=srvport, comport=comport, server=server, client=client)
+        self.initvals = dict(test=test, ip=srvip, port=srvport, comport=comport, initserver=initserver, client=client)
         self.test = test
         self.client = client
-		
+
+        if client:
+            self.initserver = False
+        else:
+            self.initserver = initserver
+        
         self.draw_gui()
         #quit = QAction("Quit", self)
         #quit.triggered.connect(self.sair)
@@ -57,25 +62,46 @@ class WMesaServer(QMainWindow):
         vbox = QVBoxLayout()
         brow = QHBoxLayout()
         
-        self.com = comconfig.COMConfig(True, self.initvals['comport'], baud=9600, size=8, parity='N', stop=1, parent=self)
+        if not self.client:
+            self.com = comconfig.COMConfig(True, self.initvals['comport'], baud=9600, size=8, parity='N', stop=1, parent=self)
         
-        self.rpc = xmlrpcconfig.XMLRPCConfig(True, self.initvals['ip'], self.initvals['port'], parent=self)
-        self.check_rpc = QCheckBox("Usar XML-RPC")
-        self.check_rpc.stateChanged.connect(self.rpc_check_changed)
-        self.check_rpc.setChecked(True)
-        vbox.addWidget(self.com)
-        vbox.addWidget(self.check_rpc)
-        vbox.addWidget(self.rpc)
-        
-        self.config_button = QPushButton("Config")
-        self.sair_button = QPushButton("Sair")
-        vbox.addLayout(brow)
-        brow.addWidget(self.config_button)
-        brow.addWidget(self.sair_button)
-        self.config_button.clicked.connect(self.init_server)
-        self.sair_button.clicked.connect(self.sair)
+            self.rpc = xmlrpcconfig.XMLRPCConfig(True, self.initvals['ip'], self.initvals['port'], parent=self)
+            self.check_rpc = QCheckBox("Usar XML-RPC")
+            self.check_rpc.stateChanged.connect(self.rpc_check_changed)
+            if self.initserver:
+                self.check_rpc.setChecked(True)
+            else:
+                self.check_rpc.setChecked(False)
+            
+            vbox.addWidget(self.com)
+            vbox.addWidget(self.check_rpc)
+            vbox.addWidget(self.rpc)
+            
+            self.config_button = QPushButton("Config")
+            self.sair_button = QPushButton("Sair")
+            vbox.addLayout(brow)
+            brow.addWidget(self.config_button)
+            brow.addWidget(self.sair_button)
+            self.config_button.clicked.connect(self.init_server)
+            self.sair_button.clicked.connect(self.sair)
 
-        self.widget.setLayout(vbox)
+            self.widget.setLayout(vbox)
+        else: # cliente
+            self.com = None
+            self.check_rpc = None
+            self.rpc = xmlrpcconfig.XMLRPCConfig(False, self.initvals['ip'], self.initvals['port'], parent=self)
+            vbox.addWidget(self.rpc)
+            
+            self.config_button = QPushButton("Config")
+            self.sair_button = QPushButton("Sair")
+            vbox.addLayout(brow)
+            brow.addWidget(self.config_button)
+            brow.addWidget(self.sair_button)
+            self.config_button.clicked.connect(self.init_client)
+            self.sair_button.clicked.connect(self.sair)
+
+            self.widget.setLayout(vbox)
+                
         return
     
     def rpc_check_changed(self):
@@ -84,6 +110,31 @@ class WMesaServer(QMainWindow):
         else:
             self.rpc.setEnabled(False)
             
+    def init_client(self):
+        xaddr = self.rpc.ipaddr().strip()
+        xport = self.rpc.port()
+        time.sleep(1)
+        serv = "http://{}:{}".format(xaddr, xport)
+        m = xmlrpc.client.ServerProxy(serv)
+        self.process = None
+        err = False
+        try:
+            if m.ping() == 123:
+                self.mesa = m
+                self.close()
+                self.win = pyqtmesa.MainWindow(self.mesa, '', self.process)
+                self.win.show()
+                return
+            else:
+                err = True
+        except:
+            err = True
+
+        if err:
+            QMessageBox.warning(self, 'Erro', "Não foi possível encontrar o servidor XML-RPC. Tente outro IP ou porta", QMessageBox.Ok)
+          
+        
+                
         
     def init_server(self):
         port = self.com.comport()
@@ -94,7 +145,8 @@ class WMesaServer(QMainWindow):
         pr = None
         m = None
         self.process = None
-        if self.check_rpc.isChecked():
+        self.initserver = self.check_rpc.isChecked()
+        if self.initserver:
             xaddr = self.rpc.ipaddr().strip()
             xport = self.rpc.port()
 
@@ -105,20 +157,20 @@ class WMesaServer(QMainWindow):
                 pr.start()
 
                 time.sleep(5)
-
-                m = xmlrpc.client.ServerProxy("http://{}:{}".format(xaddr, xport))
+                serv = "http://{}:{}".format(xaddr, xport)
+                m = xmlrpc.client.ServerProxy(serv)
                 try:
                     if m.ping() == 123:
                         break
                 except:
                     pr.terminate()
-                    QMessageBox.warning(self, 'Erro', "Não foi possível inicial o servidor XML-RPC. Tentando novamente", QMessageBox.Ok)
+                    QMessageBox.warning(self, 'Erro', "Não foi possível iniciar o servidor XML-RPC. Tentando novamente", QMessageBox.Ok)
                     if ntries > 4:
                         pr = None
                         m = None
                         break
                     time.sleep(4)
-
+            
         else:
             #import mesateste as mesa
             if self.test:
@@ -139,7 +191,7 @@ class WMesaServer(QMainWindow):
         self.mesa = m
         if m is not None:
             self.close()
-            self.win = pyqtmesa.MainWindow(self.mesa, self.process)
+            self.win = pyqtmesa.MainWindow(self.mesa, '', self.process)
             self.win.show()
             return
         else:
@@ -157,7 +209,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="wmesa")
     parser.add_argument("-t", "--test", help="Interface teste da mesa giratória", action="store_true")
     parser.add_argument("-i", "--ip", help="Endereço IP do servidor XML-RPC", default="localhost")
-    parser.add_argument("-p", "--port", help="Porta XML-RPC do servidor XML-RPC", default=9656, type=int)
+    parser.add_argument("-p", "--port", help="Porta XML-RPC do servidor XML-RPC", default=9596, type=int)
     parser.add_argument("-s", "--comport", help="Porta serial a ser utilizada", default="COM1")
     parser.add_argument("-n", "--serverless", help="Não inicie o servidor XML-RPC", action="store_true")
     parser.add_argument("-c", "--client", help="Criar interface para cliente de servidor XML-RPC", action="store_true")
