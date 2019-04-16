@@ -525,7 +525,7 @@ class Help(QWidget):
         
         self.button_fechar.clicked.connect(self.fechar)
         
-        self.setWindowIcon(QIcon('ipt.jpg'))
+        self.setWindowIcon(QIcon('ipt.ico'))
         
         self.show()
         
