@@ -8,7 +8,7 @@ from PyQt5.QtGui import QPixmap, QIcon, QRegExpValidator, QIntValidator, QPainte
 import time
 
 
-def ip4addr():
+def ip4addr(addlocalhost=True):
     import netifaces
 
     xinterf = netifaces.interfaces()
@@ -20,7 +20,10 @@ def ip4addr():
         if 2 in net:
             ip = net[2][0]['addr']
             addr.append(ip)
-
+    if addlocalhost:
+        if "localhost" not in addr and "127.0.0.1" not in addr:
+            addr.append("localhost")
+    
     return addr
 
         
