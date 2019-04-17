@@ -40,29 +40,20 @@ class XMLRPCConfig(QWidget):
         super(XMLRPCConfig, self).__init__(parent=parent)
 
         self.server = server
-        if server:
-            import netifaces
-            addr = ip4addr()
-            self.iptext = QComboBox(self)
-            for a in addr:
-                self.iptext.addItem(a)
-            if ip is not None:
-                if 'localhost' in ip:
-                    ip = '127.0.0.1'
-                if ip in addr:
-                    self.iptext.setCurrentIndex(addr.index(ip))
-        else:
+        #if server:
+        import netifaces
+        addr = ip4addr()
+        self.iptext = QComboBox(self)
+        for a in addr:
+            self.iptext.addItem(a)
+        if ip is not None:
+            if 'localhost' in ip:
+                ip = '127.0.0.1'
+            if ip in addr:
+                self.iptext.setCurrentIndex(addr.index(ip))
 
-            self.iptext = QLineEdit()
-
-            ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"
-            ipRegex = QRegExp("^" + ipRange + "\\." + ipRange + "\\." + ipRange + "\\." + ipRange + "$")
-            ipValidator = QRegExpValidator(ipRegex, self.iptext)
-
-            self.iptext.setValidator(ipValidator)
-            
-            if ip is not None:
-                self.iptext.setText(ip)
+        if not server:
+            self.iptext.setEditable(True)
         
         iplab = QLabel("IP:")
 
@@ -92,23 +83,30 @@ class XMLRPCConfig(QWidget):
         self.setLayout(col0)
         
     def ipaddr(self):
-        if self.server:
-            ip = self.iptext.currentText()
-        else:
-            ip = self.iptext.text()
-        return ip
+        return self.iptext.currentText()
     def port(self):
         return self.porttext.text()
 
 
 
 
-if __name__ == '__main__':  
-    #robo = roboteste.mesa()
-    app = QApplication(sys.argv)
+if __name__ == '__main__':
     
-    win = XMLRPCConfig(False, "localhost")
-    win.show()
+    #robo = roboteste.mesa()
+    import argparse
+    parser = argparse.ArgumentParser(description="xmlrpcconfig")
+    parser.add_argument("-i", "--ip", help="Endereço IP do servidor XML-RPC", default="localhost")
+    parser.add_argument("-p", "--port", help="Porta XML-RPC do servidor XML-RPC", default=9596, type=int)
+    parser.add_argument("-s", "--server", help="Porta XML-RPC do servidor XML-RPC", action="store_true")
+    args = parser.parse_args()
 
-    sys.exit(app.exec_())
+    app = QApplication([])
+    
+    win = XMLRPCConfig(args.server, args.ip, args.port)
+    win.show()
+    r = app.exec_()
+
+    print(win.ipaddr())
+    print(win.port())
+    sys.exit(r)
 
