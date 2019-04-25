@@ -21,9 +21,9 @@ class Robo:
         if r:
             self.x += x
         elif a:
-            self.x = x + self.x0
+            self.x = x 
         else:
-            self.x = x
+            self.x = x + self.x0
         print("move(x={}, a={}, r={}, sync={}".format(x, a, r, sync))
     
     def rmove(self, x, sync = False):
@@ -31,19 +31,19 @@ class Robo:
         self.move(x, r=True, sync=sync)
         return
     def abs_position(self, pulses=False):
-        xx = self.x + self.x0
+        xx = self.x 
         print("abs_position() = {}".format(xx))
         return dict(x=xx)
             
     def position(self):
-        xx = self.x 
+        xx = self.x - self.x0
         print("position() = {}".format(xx))
         return dict(x=xx)
     
-    def set_reference(self):
-        print("set_reference()")
-        self.x0 = self.x + self.x0
-        self.x = self.x0
+    def set_reference(self, xref=0):
+        print("set_reference({})".format(xref))
+        self.x0 = self.x - xref
+        #self.x = self.x0
         
     def home(self, eixo, sinal):
         print("home({}, {})".format(eixo, sinal))

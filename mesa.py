@@ -149,11 +149,11 @@ class Robo:
         x=p['x']-self.x0
         return dict(x=x)
     
-    def set_reference(self):
+    def set_reference(self, xref=0):
         """Define a posicao de referencia"""
         
         p = self.abs_position(False)
-        self.x0 = p['x']
+        self.x0 = p['x'] - xref
         
     def home(self, eixo, sinal):
         """Envia o comando para o controlador procurar o sensor de homing na direcao que deve seguir para se 
