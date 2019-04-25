@@ -9,7 +9,7 @@ import sys
 from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSplashScreen, QGridLayout, QComboBox,
                              QGroupBox, QPushButton, QApplication, QSlider, QMainWindow, qApp, QLineEdit, QAction, QCheckBox)
 from PyQt5.QtCore import Qt, QRegExp
-from PyQt5.QtGui import QPixmap, QIcon, QRegExpValidator, QPainter, QColor, QFont, QPen
+from PyQt5.QtGui import QPixmap, QIcon, QRegExpValidator, QDoubleValidator, QPainter, QColor, QFont, QPen
 import time
 
 
@@ -175,11 +175,23 @@ class Reference(QWidget):
         refgroup = QGroupBox('Referência')
         
         vbox = QVBoxLayout()
+
+        hbox = QHBoxLayout()
+        lab = QLabel("Referência")
+        self.valref = QLineEdit(self)
+        self.valref.setText("0")
+        validator = QDoubleValidator()
+        self.valref.setValidator(validator)
+        hbox.addWidget(lab)
+        hbox.addWidget(self.valref)
         
         self.buttonref = QPushButton("Ponto atual como referência")
         self.buttonabsref = QPushButton("Referência absoluta")
+
+        vbox.addLayout(hbox)
         vbox.addWidget(self.buttonref)
         vbox.addWidget(self.buttonabsref)
+
         refgroup.setLayout(vbox)
         
         return refgroup
@@ -730,10 +742,11 @@ class MyTableWidget(QWidget):
         """Define a posicao atual como referencia para o robo.
         
         Chamando o comando por meio do arquivo passado por *self.mesa*"""
-        
+        xref = float(self.reference.valref.text())
         self.posClicked(True)
         self.absposClicked(True)
-        self.mesa.set_reference()
+        self.mesa.set_reference(xref)
+        self.reference.valref.setText("0")
         
     def absrefClicked(self):
         """Define a posicao atual como referencia absoluta para o robo.
