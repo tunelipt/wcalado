@@ -537,7 +537,7 @@ class Help(QWidget):
         
         self.button_fechar.clicked.connect(self.fechar)
         
-        self.setWindowIcon(QIcon('ipt.ico'))
+        self.setWindowIcon(QIcon('ipt-wmesa.ico'))
         
         self.show()
         
@@ -592,7 +592,7 @@ class MainWindow(QMainWindow):
         configMenu.addAction(helpAct)
         configMenu.addAction(exitAct)
 
-        self.setWindowIcon(QIcon('ipt.jpg'))
+        self.setWindowIcon(QIcon('ipt-wmesa.ico'))
 
         self.show()
         
