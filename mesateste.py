@@ -33,12 +33,12 @@ class Robo:
     def abs_position(self, pulses=False):
         xx = self.x 
         print("abs_position() = {}".format(xx))
-        return dict(x=xx)
+        return xx
             
     def position(self):
         xx = self.x - self.x0
         print("position() = {}".format(xx))
-        return dict(x=xx)
+        return xx
     
     def set_reference(self, xref=0):
         print("set_reference({})".format(xref))
