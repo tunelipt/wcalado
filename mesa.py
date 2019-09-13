@@ -141,19 +141,19 @@ class Robo:
                 x=pts/self._passoEncoder
             else:    
                 x=pts/self._passoMotor
-            return dict(x=x)
+            return x 
             
     def position(self):
         """Indica a posicao atual do robo de acordo com os parametros de posicao definidos inicialmente"""
         p = self.abs_position()
-        x=p['x']-self.x0
-        return dict(x=x)
+        x=p-self.x0
+        return x 
     
     def set_reference(self, xref=0):
         """Define a posicao de referencia"""
         
         p = self.abs_position(False)
-        self.x0 = p['x'] - xref
+        self.x0 = p - xref
         
     def home(self, eixo, sinal):
         """Envia o comando para o controlador procurar o sensor de homing na direcao que deve seguir para se 

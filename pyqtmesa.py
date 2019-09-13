@@ -673,7 +673,6 @@ class MyTableWidget(QWidget):
         clickedButton = self.sender()
         digitFunction = clickedButton.text()
         
-        p = self.mesa.position()['x']
         if digitFunction[0] == 'H':
             x = (-1)*float(self.step.sliderx.value())
             self.mesa.rmove(x)
@@ -718,7 +717,7 @@ class MyTableWidget(QWidget):
             self.text1 = ''
             self.changed = False
         else:
-            p = self.mesa.position()['x']
+            p = self.mesa.position()
             self.text1 = "Ângulo = {}".format(format(p, '.3f'))
         self.position.labelp.setText(self.text1)
         
@@ -734,7 +733,7 @@ class MyTableWidget(QWidget):
             self.text2 = ''
             self.changed = False
         else:
-            p = self.mesa.abs_position()['x']
+            p = self.mesa.abs_position()
             self.text2 = "Ângulo = {}".format(format(p, '.3f'))
         self.position.labelabsp.setText(self.text2)
         
