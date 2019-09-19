@@ -12,16 +12,18 @@ from PyQt5.QtWidgets import (QLabel, QWidget, QVBoxLayout, QHBoxLayout, QSplashS
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QPixmap, QIcon, QRegExpValidator, QPainter, QColor, QFont, QPen
 import time
-import comconfig
-import xmlrpcconfig
 
-import pyqtmesa
+from wmesalib import comconfig
+from wmesalib import xmlrpcconfig
+from wmesalib import pyqtmesa
 
 import xmlrpc.client
    
 from multiprocessing import Process, freeze_support
 import mesaxmlrpc
 import argparse
+
+import os.path
 
 class WMesaServer(QMainWindow):
     """Classe implementada a partir da classe QMainWindow e gera a tela inicial,
@@ -53,7 +55,7 @@ class WMesaServer(QMainWindow):
         self.process = None
         self.mesa = None
         
-        self.setWindowIcon(QIcon('ipt.jpg'))
+        self.setWindowIcon(QIcon(os.path.join('wmesalib', 'ipt.ico')))
         self.show()
     
     def draw_gui(self):
@@ -178,10 +180,10 @@ class WMesaServer(QMainWindow):
         else:
             #import mesateste as mesa
             if self.test:
-                import mesateste as mesa
+                import wmesalib.mesateste as mesa
                 msg = "TESTE: {}".format(port)
             else:
-                import mesa
+                import wmesalib.mesa
                 msg = "{}".format(port)
             
             m = mesa.Robo(port, baud, size, parity, stopbits)
@@ -225,7 +227,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     # Create and display the splash screen
-    splash_pix = QPixmap('ipt.jpg')
+    splash_pix = QPixmap(os.path.join('wmesalib', 'ipt.jpg'))
     splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
     splash.setMask(splash_pix.mask())
     splash.show()
