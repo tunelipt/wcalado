@@ -113,7 +113,7 @@ class StepMove(QWidget):
         vbox.addLayout(hbox1)
         hbox2.addWidget(self.btn_motor)
         hbox2.addWidget(self.btn_encoder)
-        hbox1.addWidget(stepx,0.5)
+        hbox1.addWidget(stepx, 1)
         hbox1.addWidget(self.sliderx,6)
         hbox1.addWidget(self.entrada_x,1)
         
