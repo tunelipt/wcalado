@@ -6,7 +6,7 @@ Created on Fri Nov 24 10:33:21 2017
 """
 
 import serial
-import mesaxmlrpc
+import caladoxmlrpc
 import time
 
 class XException(Exception):
@@ -21,8 +21,8 @@ class Robo:
         """Incializa a conexao com a porta serial
         
         Keyword arguments:
-        passoMotor   Define o valor de passos do motor para uma volta completa
-        passoEncoder Define o valor de passos do encoder para uma volta completa
+        passoMotor   Define o valor de passos do motor por mm
+        passoEncoder Define o valor de passos do encoder por mm
         port         A porta serial conectada
         baudrate     Taxa em que os sinais da comunicacao variam
         bytesize     Numero de bits por caracter (5, 6, 7, 8)
@@ -30,8 +30,8 @@ class Robo:
         stopbits     Bit ou bits de parada no final do caracter (1 ou 2)"""
         self.ser = serial.Serial(port = port, baudrate = baudrate, bytesize = bytesize, parity = parity, stopbits = stopbits, timeout = 0.01)
         time.sleep(1)
-        self._passoMotor = passoMotor/360
-        self._passoEncoder = passoEncoder/360
+        self._passoMotor = passoMotor
+        self._passoEncoder = passoEncoder
         self.x0 = 0.0
         self.stopPress = False
         self.step = False
@@ -43,10 +43,12 @@ class Robo:
         self.isconnected = True
         self.sendData("E")
         reply = self.get_reply()
-        seq = ["LD3", "MN", "OSC1", "FSB1", "A2", "V4", "ER1"]
+        # LD3 - Disables both limits
+        seq = ["LD0", "MN", "OSC1", "FSB1", "A1", "V2"]  # , "ER1"]
         for i in seq:
             self.sendData(i)
-        self.step_encoder()        
+        #self.step_encoder()
+        self.step_motor()  # Usar os passos do motor
         return reply
                
     def get_reply(self, wait=0.01):

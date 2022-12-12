@@ -13,19 +13,19 @@ from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QPixmap, QIcon, QRegExpValidator, QPainter, QColor, QFont, QPen
 import time
 
-from wmesalib import comconfig
-from wmesalib import xmlrpcconfig
-from wmesalib import pyqtmesa
+from wcaladolib import comconfig
+from wcaladolib import xmlrpcconfig
+from wcaladolib import pyqtcalado
 
 import xmlrpc.client
    
 from multiprocessing import Process, freeze_support
-import mesaxmlrpc
+import caladoxmlrpc
 import argparse
 
 import os.path
 
-class WMesaServer(QMainWindow):
+class WCaladoServer(QMainWindow):
     """Classe implementada a partir da classe QMainWindow e gera a tela inicial,
     responsavel pela configuracao inicial dos argumentos utilizados pelo XMLRPC"""
     
@@ -36,7 +36,7 @@ class WMesaServer(QMainWindow):
         robo -- arquivo do qual chamam-se os comandos enviados ao robo
         """
         
-        super(WMesaServer, self).__init__(parent=parent)
+        super(WCaladoServer, self).__init__(parent=parent)
         self.widget = QWidget(self)
         self.setCentralWidget(self.widget)
         self.initvals = dict(test=test, ip=srvip, port=srvport, comport=comport, initserver=initserver, client=client)
@@ -53,13 +53,13 @@ class WMesaServer(QMainWindow):
         #quit.triggered.connect(self.sair)
         
         self.process = None
-        self.mesa = None
+        self.calado = None
         
-        self.setWindowIcon(QIcon(os.path.join('wmesalib', 'ipt.ico')))
+        self.setWindowIcon(QIcon(os.path.join('wcaladolib', 'ipt.ico')))
         self.show()
     
     def draw_gui(self):
-        self.setWindowTitle("Interface da mesa giratória")
+        self.setWindowTitle("Interface da calado giratória")
         #self.setGeometry(50, 50, 350, 400)
         vbox = QVBoxLayout()
         brow = QHBoxLayout()
@@ -123,9 +123,9 @@ class WMesaServer(QMainWindow):
         msg = "http://{}:{}".format(xaddr, xport)
         try:
             if m.ping() == 123:
-                self.mesa = m
+                self.calado = m
                 self.close()
-                self.win = pyqtmesa.MainWindow(self.mesa, msg, self.process)
+                self.win = pyqtcalado.MainWindow(self.calado, msg, self.process)
                 self.win.show()
                 return
             else:
@@ -159,7 +159,7 @@ class WMesaServer(QMainWindow):
             ntries = 0
             while True:
                 ntries = ntries + 1
-                pr = Process(target=mesaxmlrpc.start_server, args=(self.test, xaddr, xport, port, baud, size, parity, stopbits))
+                pr = Process(target=caladoxmlrpc.start_server, args=(self.test, xaddr, xport, port, baud, size, parity, stopbits))
                 pr.start()
 
                 time.sleep(5)
@@ -178,15 +178,15 @@ class WMesaServer(QMainWindow):
                     time.sleep(4)
             
         else:
-            #import mesateste as mesa
+            #import caladoteste as calado
             if self.test:
-                import wmesalib.mesateste as mesa
+                import wcaladolib.caladoteste as calado
                 msg = "TESTE: {}".format(port)
             else:
-                import wmesalib.mesa
+                import wcaladolib.calado
                 msg = "{}".format(port)
             
-            m = mesa.Robo(port, baud, size, parity, stopbits)
+            m = calado.Robo(port, baud, size, parity, stopbits)
             time.sleep(3)
             try:
                 if m.ping() != 123:
@@ -196,14 +196,14 @@ class WMesaServer(QMainWindow):
                 MessageBox.Ok)
                 m = None
         self.process = pr
-        self.mesa = m
+        self.calado = m
         if m is not None:
             self.close()
-            self.win = pyqtmesa.MainWindow(self.mesa, msg, self.process)
+            self.win = pyqtcalado.MainWindow(self.calado, msg, self.process)
             self.win.show()
             return
         else:
-            QMessage.critical(self, 'Erro', "Não foi possível criar uma interface com a Mesa",
+            QMessage.critical(self, 'Erro', "Não foi possível criar uma interface com a Calado",
                               QMessageBox.Ok)
             
     def sair(self):
@@ -214,8 +214,8 @@ class WMesaServer(QMainWindow):
 if __name__ == '__main__':  
     freeze_support()
     
-    parser = argparse.ArgumentParser(description="wmesa")
-    parser.add_argument("-t", "--test", help="Interface teste da mesa giratória", action="store_true")
+    parser = argparse.ArgumentParser(description="wcalado")
+    parser.add_argument("-t", "--test", help="Interface teste da calado giratória", action="store_true")
     parser.add_argument("-i", "--ip", help="Endereço IP do servidor XML-RPC", default="localhost")
     parser.add_argument("-p", "--port", help="Porta XML-RPC do servidor XML-RPC", default=9596, type=int)
     parser.add_argument("-s", "--comport", help="Porta serial a ser utilizada", default="COM1")
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     # Create and display the splash screen
-    splash_pix = QPixmap(os.path.join('wmesalib', 'ipt.jpg'))
+    splash_pix = QPixmap(os.path.join('wcaladolib', 'ipt.jpg'))
     splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
     splash.setMask(splash_pix.mask())
     splash.show()
@@ -236,7 +236,7 @@ if __name__ == '__main__':
     # Simulate something that takes time
     time.sleep(1)
     
-    win = WMesaServer(args.test, args.ip, args.port, args.comport, not args.serverless, args.client)
+    win = WCaladoServer(args.test, args.ip, args.port, args.comport, not args.serverless, args.client)
     win.show()
     splash.finish(win)
 

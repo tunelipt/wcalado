@@ -13,12 +13,12 @@ from PyQt5.QtGui import QPixmap
 
 import argparse
 import time
-import wmesa
+import wcalado
 
 
 if __name__ == '__main__':  
     
-    parser = argparse.ArgumentParser(description="wmesa")
+    parser = argparse.ArgumentParser(description="wcalado")
     parser.add_argument("-i", "--ip", help="Endereço IP do servidor XML-RPC", default="localhost")
     parser.add_argument("-p", "--port", help="Porta XML-RPC do servidor XML-RPC", default=9596, type=int)
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     # Simulate something that takes time
     time.sleep(1)
     
-    win = wmesa.WMesaServer(False, args.ip, args.port, "COM1", False, True)
+    win = wcalado.WCaladoServer(False, args.ip, args.port, "COM1", False, True)
     win.show()
     splash.finish(win)
 
