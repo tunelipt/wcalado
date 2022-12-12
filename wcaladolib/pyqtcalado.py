@@ -35,18 +35,18 @@ class RelativeMove(QWidget):
     
         relgroup = QGroupBox('Movimento Relativo')
         
-        box = QHBoxLayout() 
+        box = QVBoxLayout() 
 
-        self.buttoncw = QPushButton('Horário (-)')
-        self.buttonccw = QPushButton('Anti-horário (+)')
+        self.buttonup = QPushButton('Subir')
+        self.buttondo = QPushButton('Descer')
         
-        self.buttoncw.setMaximumWidth(85)
-        self.buttonccw.setMaximumWidth(85)
-        self.buttoncw.setMaximumHeight(50)
-        self.buttonccw.setMaximumHeight(50)
+        self.buttonup.setMaximumWidth(85)
+        self.buttondo.setMaximumWidth(85)
+        self.buttonup.setMaximumHeight(50)
+        self.buttondo.setMaximumHeight(50)
         
-        box.addWidget(self.buttoncw)
-        box.addWidget(self.buttonccw)
+        box.addWidget(self.buttonup)
+        box.addWidget(self.buttondo)
 
         relgroup.setLayout(box)
         
@@ -85,6 +85,9 @@ class StepMove(QWidget):
         self.btn_motor.setMinimumHeight(50)
         self.btn_encoder.setMinimumHeight(50)
 
+        self.btn_motor.setEnabled(False)
+        self.btn_encoder.setEnabled(False)
+        
        #Definicao do sliderx
         self.sliderx = QSlider(Qt.Horizontal, self)
         self.sliderx.setFocusPolicy(Qt.StrongFocus)
@@ -96,10 +99,10 @@ class StepMove(QWidget):
         self.sliderx.setMinimum(0)
         self.sliderx.setMaximum(180)
 
-        self.labelx = QLabel('10°')
+        self.labelx = QLabel('10')
         self.labelx.setMinimumHeight(40)
         self.labelx.setAlignment(Qt.AlignCenter)
-        stepx = QLabel("Ângulo")
+        stepx = QLabel("Passo (mm)")
         
         self.entrada_x = QLineEdit(self)
         self.entrada_x.setText('10')
@@ -149,7 +152,7 @@ class StepMove(QWidget):
         """
         
         label = labels
-        label.setText(str(value)+'°')
+        label.setText(str(value))
         self.entrada_x.setText(str(value))
         
 class Reference(QWidget):
@@ -224,7 +227,7 @@ class Home(QWidget):
         vbox.addWidget(self.buttonxp)
         vbox.addWidget(self.buttonxm)
         homegroup.setLayout(vbox)
-        
+        homegroup.setEnabled(False)
         return homegroup
 
 
@@ -275,9 +278,9 @@ class Move(QWidget):
         
         self.move_x.setValidator(validator)
         
-        self.posx = QLabel('0°')
+        self.posx = QLabel('0')
         self.posx.setAlignment(Qt.AlignCenter)
-        labelx = QLabel("Ângulo")
+        labelx = QLabel("Posição")
         labelx.setMinimumHeight(40)
 
         vbox.addWidget(self.posx)
@@ -320,7 +323,7 @@ class Move(QWidget):
         """
         
         label = labels
-        label.setText(str(value)+'°')
+        label.setText(str(value))
         self.move_x.setText(str(value))
 
 
@@ -441,20 +444,20 @@ class help_text(QWidget):
         super().__init__()
         
         self.texto1 = "Movimento relativo:"
-        self.texto2 = """Para a movimentação da mesa em relação à posição atual, devem ser utilizados os"""
-        self.texto3 = """botões 'Horário' e 'Anti-horário',os quais tomam os valores do slider do grupo"""
-        self.texto4 = """'Step' como o ângulo a ser adicionado ou subtraído da posição de partida."""
+        self.texto2 = """Para a mudança do caladoem relação à posição atual, devem ser utilizados os"""
+        self.texto3 = """botões 'Subir' e 'Descer',os quais tomam os valores do slider do grupo"""
+        self.texto4 = """'Step' como o valor a ser adicionado ou subtraído da posição de partida."""
         
         self.texto5 = "Movimento absoluto:"
-        self.texto6 = """Para a movimentação da mesa em relação à referência absoluta da mesa,"""
+        self.texto6 = """Para a mudança do calado em relação à referência absoluta,"""
         self.texto7 = """o botão'Mover' deve ser utilizado, tal botão utiliza o valor do slider""" 
         self.texto8 = """ no grupo 'Movimento' como o ângulo referente à posição final do movimento."""
         self.texto9 = "Posição:"
-        self.texto10 = """Para obter a posição atual da mesa utiliza-se os botões 'Posição' e""" 
+        self.texto10 = """Para obter a posição atual do calado utiliza-se os botões 'Posição' e""" 
         self.texto11 = """'Posição Absoluta', que se referem às posições relativas ao que é estabelecido"""
         self.texto12 = """pelos botões 'Ponto atual como referência' e 'Referência absoluta', respectivamente."""
         self.texto13 = "Homing:"
-        self.texto14 = """Para levar a mesa ao ponto de referência definido pelo sensor usam-se os"""
+        self.texto14 = """Para levar o calado ao ponto de referência definido pelo sensor usam-se os"""
         self.texto15 = """botões 'Home +' e 'Home -', em que os sinais são referentes à direção do movimento."""            
         self.textos = [self.texto1, self.texto2, self.texto3, self.texto4, self.texto5, self.texto6, self.texto7,
                        self.texto8, self.texto9, self.texto10, self.texto11, self.texto12, self.texto13, self.texto14, self.texto15]
@@ -558,7 +561,7 @@ class MainWindow(QMainWindow):
         """
         super(MainWindow, self).__init__(parent)
         
-        self.mesa = mesa
+        self.calado = mesa
         titulo = "Movimentador do Tunel"
         if msg is not None:
             titulo += " - " + msg
@@ -566,7 +569,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(titulo)
         self.setGeometry(50, 50, 500, 550)
         
-        self.table_widget = MyTableWidget(self.mesa, process, self)
+        self.table_widget = MyTableWidget(self.calado, process, self)
         self.setCentralWidget(self.table_widget)
 
         exitAct = QAction(QIcon('exit.png'), '&Sair', self)
@@ -599,7 +602,7 @@ class MainWindow(QMainWindow):
     def new_wind(self):
         """Fecha a janela de boas vindas e inicia a janela principal"""
         self.close()
-        self.mesa.disconnect()
+        self.calado.disconnect()
         self.win = Welcome()
         self.win.show()
         
@@ -612,10 +615,10 @@ class MyTableWidget(QWidget):
     """Classe implementada a partir da classe QWidget, gera a tela inicial dispondo
     os grupos criados em um *grid layout*"""
     
-    def __init__(self, mesa, process=None, parent=None):
+    def __init__(self, calado, process=None, parent=None):
         """Define os grupos dentro do *grid layout*"""
         
-        self.mesa = mesa
+        self.calado = calado
         self.process = process
         super(MyTableWidget, self).__init__(parent)
         
@@ -641,8 +644,8 @@ class MyTableWidget(QWidget):
         grid.addWidget(self.clear, 2, 2)
         self.setLayout(grid)
         
-        self.relativo.buttonccw.clicked.connect(self.rmoveClicked)
-        self.relativo.buttoncw.clicked.connect(self.rmoveClicked)
+        self.relativo.buttondo.clicked.connect(self.rmoveClicked)
+        self.relativo.buttonup.clicked.connect(self.rmoveClicked)
         self.step.btn_encoder.clicked.connect(self.stepEncoderClicked)
         self.step.btn_motor.clicked.connect(self.stepMotorClicked)
         self.reference.buttonref.clicked.connect(self.refClicked)
@@ -657,7 +660,7 @@ class MyTableWidget(QWidget):
         
     def sair(self):
         """Finaliza o processo de comunicação e encerra o aplicativo"""
-        self.mesa.disconnect()
+        self.calado.disconnect()
         if self.process is not None:
             self.process.terminate()
         qApp.quit()
@@ -668,47 +671,47 @@ class MyTableWidget(QWidget):
         """Utiliza o metodo sender dos botoes para a movimentacao relativa de cada uma das coordenadas,
         levando os valores do respectivo passo em consideração.
         
-        Chamando o comando por meio do arquivo passado por *self.mesa*"""
+        Chamando o comando por meio do arquivo passado por *self.calado*"""
         
         clickedButton = self.sender()
         digitFunction = clickedButton.text()
         
-        if digitFunction[0] == 'H':
-            x = (-1)*float(self.step.sliderx.value())
-            self.mesa.rmove(x)
-        
-        elif digitFunction[0] == "A":
+        if digitFunction[0] == 'S':
             x = float(self.step.sliderx.value())
-            self.mesa.rmove(x)
+            self.calado.rmove(x)
+        
+        elif digitFunction[0] == "D":
+            x = -float(self.step.sliderx.value())
+            self.calado.rmove(x)
         self.posClicked(True)
         self.absposClicked(True)
         
     def moveClicked(self):
         """Envia o robo a posição indicada pelos *sliders* da classe Move.
         
-        Chamando o comando por meio do arquivo passado por *self.mesa*"""
+        Chamando o comando por meio do arquivo passado por *self.calado*"""
         x = float(self.move.slidermx.value())
         
         
-        self.mesa.move(x)
+        self.calado.move(x)
         self.posClicked(True)
         self.absposClicked(True)
         
     def homexClicked(self):
         """Envia o robo a posição de referencia em X.
         
-        Chamando o comando por meio do arquivo passado por *self.mesa*"""
+        Chamando o comando por meio do arquivo passado por *self.calado*"""
         
         clickedButton = self.sender()
         sign = clickedButton.text()[-1]
-        self.mesa.home('x',sign)
+        self.calado.home('x',sign)
         self.posClicked(True)
         self.absposClicked(True)
         
     def posClicked(self, changed = False):
         """Obtem a posicao do robo e a imprime.
         
-        Chamando o comando por meio do arquivo passado por *self.mesa*
+        Chamando o comando por meio do arquivo passado por *self.calado*
         
         Keyword arguments:
         changed -- indica alteracao na posicao, para valor verdadeiro apaga a posicao da interface"""
@@ -717,14 +720,14 @@ class MyTableWidget(QWidget):
             self.text1 = ''
             self.changed = False
         else:
-            p = self.mesa.position()
+            p = self.calado.position()
             self.text1 = "Ângulo = {}".format(format(p, '.3f'))
         self.position.labelp.setText(self.text1)
         
     def absposClicked(self, changed = False):
         """Obtem a posicao absoluta do robo e a imprime.
         
-        Chamando o comando por meio do arquivo passado por *self.mesa*
+        Chamando o comando por meio do arquivo passado por *self.calado*
         
         Keyword arguments:
         changed -- indica alteracao na posicao, para valor verdadeiro apaga a posicao da interface"""
@@ -733,44 +736,44 @@ class MyTableWidget(QWidget):
             self.text2 = ''
             self.changed = False
         else:
-            p = self.mesa.abs_position()
+            p = self.calado.abs_position()
             self.text2 = "Ângulo = {}".format(format(p, '.3f'))
         self.position.labelabsp.setText(self.text2)
         
     def refClicked(self):
         """Define a posicao atual como referencia para o robo.
         
-        Chamando o comando por meio do arquivo passado por *self.mesa*"""
+        Chamando o comando por meio do arquivo passado por *self.calado*"""
         xref = float(self.reference.valref.text())
         self.posClicked(True)
         self.absposClicked(True)
-        self.mesa.set_reference(xref)
+        self.calado.set_reference(xref)
         self.reference.valref.setText("0")
         
     def absrefClicked(self):
         """Define a posicao atual como referencia absoluta para o robo.
         
-        Chamando o comando por meio do arquivo passado por *self.mesa*"""
+        Chamando o comando por meio do arquivo passado por *self.calado*"""
         
         self.posClicked(True)
         self.absposClicked(True)
-        self.mesa.set_abs_reference()
+        self.calado.set_abs_reference()
         
     def stopClicked(self):
         """Parada emergencial da movimentacao.
         
-        Chamando o comando por meio do arquivo passado por *self.mesa*"""
+        Chamando o comando por meio do arquivo passado por *self.calado*"""
         
-        self.mesa.stop()
+        self.calado.stop()
         self.posClicked(True)
         self.absposClicked(True)
         
     def clearClicked(self):
         """Limpa os dados enviados.
         
-        Chamando o comando por meio do arquivo passado por *self.mesa*"""
+        Chamando o comando por meio do arquivo passado por *self.calado*"""
         
-        self.mesa.clear()
+        self.calado.clear()
         self.posClicked(True)
         self.absposClicked(True)
     
@@ -778,7 +781,7 @@ class MyTableWidget(QWidget):
         """Muda o metodo de passos enviados do controlador para o valor de passos 
         calibrados para o motor."""
         
-        self.mesa.step_motor()
+        self.calado.step_motor()
         self.step.btn_motor.setStyleSheet("background-color:darkCyan;  border-style: outset; border-width: 2px; border-radius: 10px; border-color: blue;")
         self.step.btn_encoder.setStyleSheet("")
         
@@ -786,7 +789,7 @@ class MyTableWidget(QWidget):
         """Muda o metodo de passos enviados do controlador para o valor de passos 
         calibrados pelo encoder."""
         
-        self.mesa.step_encoder()
+        self.calado.step_encoder()
         self.step.btn_encoder.setStyleSheet("background-color:darkCyan;  border-style: outset; border-width: 2px; border-radius: 10px; border-color: blue;")
         self.step.btn_motor.setStyleSheet("")
         

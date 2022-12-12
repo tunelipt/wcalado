@@ -24,11 +24,12 @@ class Robo:
             self.x = x 
         else:
             self.x = x + self.x0
-        print("move(x={}, a={}, r={}, sync={}".format(x, a, r, sync))
+        print("move(x={}, a={}, r={}, sync={})".format(self.x, a, r, sync))
     
     def rmove(self, x, sync = False):
         """Inicializa a movimentacao incremental do robo no eixo indicado"""
         self.move(x, r=True, sync=sync)
+        #print("rmove(x={}, sync={})".format(x, sync))
         return
     def abs_position(self, pulses=False):
         xx = self.x 

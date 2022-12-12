@@ -26,7 +26,7 @@ class RelativeMove(QWidget):
         column = QVBoxLayout()
         column.addWidget(self.interface())
         
-        self.setLayout(column)
+        #self.setLayout(column)
         
         
     def interface(self):
@@ -35,18 +35,18 @@ class RelativeMove(QWidget):
     
         relgroup = QGroupBox('Movimento Relativo')
         
-        box = QHBoxLayout() 
+        box = QVBoxLayout() 
 
-        self.buttoncw = QPushButton('CW')
-        self.buttonccw = QPushButton('CCW')
+        self.buttonup = QPushButton('Subir')
+        self.buttondo = QPushButton('Descer')
         
-        self.buttoncw.setMaximumWidth(50)
-        self.buttonccw.setMaximumWidth(50)
-        self.buttoncw.setMaximumHeight(50)
-        self.buttonccw.setMaximumHeight(50)
+        self.buttonup.setMaximumWidth(50)
+        self.buttondo.setMaximumWidth(50)
+        self.buttonup.setMaximumHeight(50)
+        self.buttondo.setMaximumHeight(50)
         
-        box.addWidget(self.buttoncw)
-        box.addWidget(self.buttonccw)
+        box.addWidget(self.buttonup)
+        box.addWidget(self.buttondo)
 
         relgroup.setLayout(box)
         
@@ -716,8 +716,8 @@ class MyTableWidget(QWidget):
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
         
-        self.tab1.relativo.buttoncw.clicked.connect(self.rmoveClicked)
-        self.tab1.relativo.buttonccw.clicked.connect(self.rmoveClicked)
+        self.tab1.relativo.buttonup.clicked.connect(self.rmoveClicked)
+        self.tab1.relativo.buttondo.clicked.connect(self.rmoveClicked)
         self.tab1.step.btn_encoder.clicked.connect(self.stepEncoderClicked)
         self.tab1.step.btn_motor.clicked.connect(self.stepMotorClicked)
         self.tab4.ref.buttonref.clicked.connect(self.refClicked)
