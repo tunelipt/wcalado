@@ -140,7 +140,7 @@ class StepMove(QWidget):
         
         slider = sliders
         if text:
-            slider.setValue(float(text))
+            slider.setValue(int(text))
         
     def changeValue(self, value, labels):
         """changeValue toma os valores dos *sliders* a cada alteracao feita e repassa para o texto
@@ -309,9 +309,9 @@ class Move(QWidget):
         slider = sliders
         if text:
             if text[0] == '-' and len(text) >= 2:
-                slider.setValue(-float(text[1:]))
+                slider.setValue(-int(text[1:]))
             elif text[0] != '-':
-                slider.setValue(float(text))
+                slider.setValue(int(text))
     
     def changeValue(self, value, labels):
         """changeValue toma os valores dos *sliders* a cada alteracao feita e repassa para o texto
@@ -721,7 +721,7 @@ class MyTableWidget(QWidget):
             self.changed = False
         else:
             p = self.calado.position()
-            self.text1 = "Ângulo = {}".format(format(p, '.3f'))
+            self.text1 = "Posição = {}".format(format(p, '.3f'))
         self.position.labelp.setText(self.text1)
         
     def absposClicked(self, changed = False):
@@ -737,7 +737,7 @@ class MyTableWidget(QWidget):
             self.changed = False
         else:
             p = self.calado.abs_position()
-            self.text2 = "Ângulo = {}".format(format(p, '.3f'))
+            self.text2 = "Posição = {}".format(format(p, '.3f'))
         self.position.labelabsp.setText(self.text2)
         
     def refClicked(self):

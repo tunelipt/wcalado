@@ -183,7 +183,7 @@ class WCaladoServer(QMainWindow):
                 import wcaladolib.caladoteste as calado
                 msg = "TESTE: {}".format(port)
             else:
-                import wcaladolib.calado
+                import wcaladolib.calado as calado
                 msg = "{}".format(port)
             
             m = calado.Robo(port, baud, size, parity, stopbits)
