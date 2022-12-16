@@ -45,7 +45,8 @@ class Robo:
         reply = self.get_reply()
         # LD3 - Disables both limits
         #seq = ["LD3", "MN", "OSC1", "FSB1", "A1", "V2"]  # , "ER1"]
-        seq = ["LD3", "MN", "FSA1", "FSB0", "MR25000", "A1", "V0.5"]  # , "ER1"]
+        #seq = ["1LD1", "1MN", "1OSA0", "1OSC1", "1FSA1", "1FSB0", "1MR25000", "1A1", "1V0.5"]  # , "ER1"]
+        seq = ["LD3", "MN", "1OSA0", "1OSC1", "1FSA1", "1FSB1", "1A0.1", "1V0.1"]  # , "ER1"]
         for i in seq:
             self.sendData(i)
         #self.step_encoder()
@@ -99,7 +100,6 @@ class Robo:
                 msg = ["MPI \n", "D" + str(round(x*self._passoMotor)) + "\n", "G \n"]
             else:
                 msg = ["MPA \n", "D" + str(round((x+x0)*self._passoMotor)) + "\n", "G \n"]
-        print(msg)
         for i in msg:
             self.sendData(i)
         rep = self.get_reply()
